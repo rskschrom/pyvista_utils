@@ -1,6 +1,7 @@
 import numpy as np
 import pyvista as pv
 from pyvista_util import create_cells
+import pymeshfix as pmf
 
 # read dipole positions
 data = np.genfromtxt('geom_0046.txt', skip_header=3)
@@ -28,7 +29,10 @@ mesh = grid.contour([1], method='marching_cubes')
 smooth = mesh.smooth_taubin(n_iter=50, pass_band=0.1)
 
 # save to file
-smooth.save('aggregate.stl')
+meshfix = pmf.MeshFix(smooth)
+meshfix.repair(verbose=True)
+smooth_fix = meshfix.mesh
+smooth_fix.save('aggregate.stl')
 
 # plot
 p = pv.Plotter()
