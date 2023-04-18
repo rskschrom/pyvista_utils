@@ -26,16 +26,21 @@ grid.point_data["values"] = values.flatten(order="F")
 
 # get mesh from volume grid
 mesh = grid.contour([1], method='marching_cubes')
-smooth = mesh.smooth_taubin(n_iter=50, pass_band=0.1)
+
+# repair mesh
+meshfix = pmf.MeshFix(mesh)
+meshfix.repair(verbose=True)
+mesh_fix = meshfix.mesh
+
+# decimate and smooth
+smooth_fix = mesh_fix.smooth_taubin(n_iter=50, pass_band=0.1)
+smooth_fix = smooth_fix.decimate(0.8)
 
 # save to file
-meshfix = pmf.MeshFix(smooth)
-meshfix.repair(verbose=True)
-smooth_fix = meshfix.mesh
 smooth_fix.save('aggregate.stl')
 
 # plot
 p = pv.Plotter()
 p.enable_eye_dome_lighting()
-p.add_mesh(smooth, color='c')
+p.add_mesh(smooth_fix, color='c')
 p.show()
