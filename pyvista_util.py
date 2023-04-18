@@ -1,6 +1,5 @@
 import numpy as np
 import pyvista as pv
-from netCDF4 import Dataset
 
 # plot cell data
 def cell_scalar_plot(ix, iy, iz, scalar):
